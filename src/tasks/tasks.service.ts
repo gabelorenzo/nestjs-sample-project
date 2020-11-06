@@ -27,8 +27,10 @@ export class TasksService {
    * Calls the TaskRepository to get a single Task by ID.
    * @param id The unique identifier of the Task to retrieve.
    */
-  async getTaskById(id: number): Promise<Task> {
-    const found = await this.taskRepository.findOne(id);
+  async getTaskById(id: number, user: User): Promise<Task> {
+    const found = await this.taskRepository.findOne({
+      where: { id, userId: user.id },
+    });
     if (!found) {
       throw new NotFoundException(`Task with ID "${id}" not found`);
     }
@@ -39,6 +41,7 @@ export class TasksService {
   /**
    * Calls the TaskRepository to creates a new Task.
    * @param createTaskDto The CreateTaskDto containing data to create the new Task.
+   * @param user The user creating the task.
    */
   async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
     return this.taskRepository.createTask(createTaskDto, user);
@@ -48,9 +51,14 @@ export class TasksService {
    * Calls the TaskRepository to update the TaskStatus of a single Task.
    * @param id The id of the Task to update.
    * @param status The status to set on the Task.
+   * @param user The user the task to be updated belongs to
    */
-  async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
-    const result = await this.getTaskById(id);
+  async updateTaskStatus(
+    id: number,
+    status: TaskStatus,
+    user: User,
+  ): Promise<Task> {
+    const result = await this.getTaskById(id, user);
     result.status = status;
     await result.save();
 
@@ -60,9 +68,10 @@ export class TasksService {
   /**
    * Calls the TaskRepository to delete a Task by ID.
    * @param id The unique identifier of the Task to delete.
+   * @param user The user who is deleting their task.
    */
-  async deleteTask(id: number): Promise<void> {
-    const result = await this.taskRepository.delete(id);
+  async deleteTask(id: number, user: User): Promise<void> {
+    const result = await this.taskRepository.delete({ id, userId: user.id });
 
     if (result.affected === 0) {
       throw new NotFoundException(`Task with ID "${id} not found`);
