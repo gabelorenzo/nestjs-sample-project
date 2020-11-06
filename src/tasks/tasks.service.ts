@@ -17,9 +17,10 @@ export class TasksService {
   /**
    * Calls the TaskRepository to get an array of Tasks, optionally filtering down the results.
    * @param filterDto The GetTasksFilterDto object used to filter down the Tasks.
+   * @param user The user creating the Task.
    */
-  getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
-    return this.taskRepository.getTasks(filterDto);
+  getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
+    return this.taskRepository.getTasks(filterDto, user);
   }
 
   /**
