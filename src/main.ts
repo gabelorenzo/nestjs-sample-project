@@ -4,9 +4,14 @@ import { AppModule } from './app.module';
 import * as config from 'config';
 
 async function bootstrap() {
-  const serverConfig = config.get('server');
   const logger = new Logger('bootstrap');
   const app = await NestFactory.create(AppModule);
+
+  if (process.env.NODE_ENV === 'development') {
+    app.enableCors();
+  }
+
+  const serverConfig = config.get('server');
 
   // Use the PORT enviroment variable if defined, otherwise fall back to using the config file
   const port = process.env.PORT || serverConfig.port;
