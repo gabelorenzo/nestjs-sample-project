@@ -1,2 +1,5 @@
+server:
+  origin: <S3-BUCKET-ENDPONT-FOR-STATIC-WEBSITE_HOSTING>
+
 db:
   synchronize: false
