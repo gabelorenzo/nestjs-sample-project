@@ -109,8 +109,10 @@ describe('TasksService', () => {
 
   describe('updateTaskStatus', () => {
     it('updates a task status', async () => {
+      // Mock the Task entity's "save" method to just return true
       const save = jest.fn().mockResolvedValue(true);
 
+      // Mock the TaskService#getTaskById to return a Task that contains ID and the mocked save method
       tasksService.getTaskById = jest.fn().mockResolvedValue({
         status: TaskStatus.OPEN,
         save,
@@ -125,8 +127,9 @@ describe('TasksService', () => {
         mockUser,
       );
 
-      expect(tasksService.getTaskById).toHaveBeenCalled();
+      expect(tasksService.getTaskById).toHaveBeenCalledWith(1, mockUser);
       expect(save).toHaveBeenCalled();
+      expect(result.status).toEqual(TaskStatus.DONE);
     });
   });
 });
